@@ -1,8 +1,12 @@
 import Head from 'next/head'
-import Image from 'next/image'
+import axios from 'axios';
+import crypto from 'crypto';
 import styles from '../styles/Home.module.css'
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
 
-export default function Home() {
+export default function HomePage(props) {
+  console.log('Homepage', props);
   return (
     <div className={styles.container}>
       <Head>
@@ -11,59 +15,35 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
+      <Stack spacing={2} direction="row">
+        <Button variant="text">Text</Button>
+        <Button variant="contained">Contained</Button>
+        <Button variant="outlined">Outlined</Button>
+      </Stack>
     </div>
   )
+}
+
+export async function getStaticProps(context) {
+  const timespan = new Date().toString();
+
+  const privateKey = "0ebdc1da819a0545afbbfe3f7837e367c8792a51";
+  const publicKey = "2665bc66e2c6b9a710725eea2dc6710a";
+  const hash = crypto.createHash('md5').update(timespan + privateKey + publicKey).digest('hex');
+
+  const response = await axios.get('https://gateway.marvel.com/v1/public/characters', {
+    params: {
+      hash,
+      ts: timespan,
+      apikey: '2665bc66e2c6b9a710725eea2dc6710a',
+    }
+  });
+
+  const charactersData = response.data.data.results;
+
+  return {
+    props: {
+      characters: charactersData
+    }
+  }
 }
