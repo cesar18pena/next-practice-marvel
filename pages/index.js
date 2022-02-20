@@ -1,10 +1,9 @@
 import Head from 'next/head'
 import axios from 'axios';
 import crypto from 'crypto';
-import styles from '../styles/Home.module.css'
-import HeroCard from '../components/HeroCard/HeroCard';
+import CharacterCard from '../components/CharacterCard/CharacterCard';
 import Layout from '../components/layout';
-import { Grid } from '@mui/material';
+import Grid from '@mui/material/Grid';
 
 function transformCharacterData(characters) {
   const transformedCharacters = characters.map(character => ({
@@ -30,7 +29,7 @@ export default function HomePage(props) {
       <Layout>
         <Grid container spacing={4} style={{ padding: '2rem' }}>
           {characters.map(character => (
-            <HeroCard key={character.id} character={character} />
+            <CharacterCard key={character.id} character={character} />
           ))}
         </Grid>
       </Layout>
